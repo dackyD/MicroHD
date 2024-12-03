@@ -83,4 +83,42 @@ public class CouponApiController(AppDbContext db, IMapper mapper) : ControllerBa
 
         return _response;
     }
+
+    [HttpPut]
+    public ResponseDto Put([FromBody] CouponDto couponDto)
+    {
+        try
+        {
+            Coupon obj = mapper.Map<Coupon>(couponDto);
+            db.Coupons.Update(obj);
+            db.SaveChanges();
+            _response.Result = mapper.Map<CouponDto>(obj);
+        }
+        catch (Exception e)
+        {
+            _response.IsSuccess = false;
+            _response.Message = e.Message;
+        }
+
+        return _response;
+    }
+
+    [HttpDelete]
+    [Route("{id:int}")]
+    public ResponseDto Delete(int id)
+    {
+        try
+        {
+            Coupon obj = db.Coupons.First(u => u.CouponId == id);
+            db.Coupons.Remove(obj);
+            db.SaveChanges();
+        }
+        catch (Exception e)
+        {
+            _response.IsSuccess = false;
+            _response.Message = e.Message;
+        }
+
+        return _response;
+    }
 }
